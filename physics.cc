@@ -15,8 +15,8 @@ void SimulationEventCallback2::onConstraintBreak(PxConstraintInfo *constraints, 
 void SimulationEventCallback2::onWake(PxActor **actors, PxU32 count) {}
 void SimulationEventCallback2::onSleep(PxActor **actors, PxU32 count) {}
 void SimulationEventCallback2::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {
-  PxRigidActor *actor1 = pairHeader.actors[0];
-  PxRigidActor *actor2 = pairHeader.actors[1];
+  PxActor *actor1 = pairHeader.actors[0];
+  PxActor *actor2 = pairHeader.actors[1];
 
   unsigned int actor1Id = (unsigned int)actor1->userData;
   unsigned int actor2Id = (unsigned int)actor2->userData;
@@ -341,7 +341,7 @@ unsigned int PScene::simulate(unsigned int *ids, float *positions, float *quater
     if (actorIter != actors.end()) {
       PxRigidActor *actor = *actorIter;
       //actor->setGlobalPose(transform, true);
-      PxRigidBody *body = dynamic_cast<PxRigidBody *>(actor);
+      PxRigidDynamic *body = dynamic_cast<PxRigidDynamic *>(actor);
       if (body) {
         // std::cout << "reset" << std::endl;
         body->setLinearVelocity(PxVec3(velocities[i*3], velocities[i*3+1], velocities[i*3+2]), true);
@@ -891,7 +891,12 @@ void PScene::setGeometryScale(unsigned int id, float *scale, PxDefaultMemoryOutp
         case PxGeometryType::Enum::eSPHERE:
         case PxGeometryType::Enum::ePLANE:
         case PxGeometryType::Enum::eHEIGHTFIELD:
-        case PxGeometryType::Enum::eGEOMETRY_COUNT: {
+        case PxGeometryType::Enum::eGEOMETRY_COUNT:
+        case PxGeometryType::Enum::ePARTICLESYSTEM:
+        case PxGeometryType::Enum::eTETRAHEDRONMESH:
+        case PxGeometryType::Enum::eHAIRSYSTEM:
+        case PxGeometryType::Enum::eCUSTOM:
+        {
           break;
         }
       }
@@ -1068,7 +1073,7 @@ void PScene::setVelocity(unsigned int id, float *velocities, bool autoWake) {
   if (actorIter != actors.end()) {
     PxRigidActor *actor = *actorIter;
 
-    PxRigidBody *body = dynamic_cast<PxRigidBody *>(actor);
+    PxRigidDynamic *body = dynamic_cast<PxRigidDynamic *>(actor);
     if (body) {
       body->setLinearVelocity(PxVec3(velocities[0], velocities[1], velocities[2]), autoWake);
     }
@@ -1083,7 +1088,7 @@ void PScene::setAngularVel(unsigned int id, float *velocities, bool autoWake) {
   if (actorIter != actors.end()) {
     PxRigidActor *actor = *actorIter;
 
-    PxRigidBody *body = dynamic_cast<PxRigidBody *>(actor);
+    PxRigidDynamic *body = dynamic_cast<PxRigidDynamic *>(actor);
     if (body) {
       body->setAngularVelocity(PxVec3(velocities[0], velocities[1], velocities[2]), autoWake);
     }
@@ -1533,6 +1538,10 @@ PxBounds3 getActorBounds(PxRigidActor *actor) {
     case PxGeometryType::Enum::ePLANE:
     case PxGeometryType::Enum::eHEIGHTFIELD:
     case PxGeometryType::Enum::eGEOMETRY_COUNT:
+    case PxGeometryType::Enum::ePARTICLESYSTEM:
+    case PxGeometryType::Enum::eTETRAHEDRONMESH:
+    case PxGeometryType::Enum::eHAIRSYSTEM:
+    case PxGeometryType::Enum::eCUSTOM:
     {
       break;
     }
@@ -1713,7 +1722,7 @@ void PScene::sweepConvexShape(
   }
 }
 
-float *PScene::getPath(float *_start, float *_dest, bool _isWalk, float _hy, float _heightTolerance, unsigned int _maxIterdetect, unsigned int _maxIterStep, unsigned int _numIgnorePhysicsIds, unsigned int *_ignorePhysicsIds) {
+/* float *PScene::getPath(float *_start, float *_dest, bool _isWalk, float _hy, float _heightTolerance, unsigned int _maxIterdetect, unsigned int _maxIterStep, unsigned int _numIgnorePhysicsIds, unsigned int *_ignorePhysicsIds) {
   
   PathFinder pathFinder(actors, _hy, _heightTolerance, _maxIterdetect, _maxIterStep, _numIgnorePhysicsIds, _ignorePhysicsIds);
   Vec start(_start[0], _start[1], _start[2]);
@@ -1732,7 +1741,7 @@ float *PScene::getPath(float *_start, float *_dest, bool _isWalk, float _hy, flo
   }
 
   return outputBuffer;
-}
+} */
 
 float *PScene::overlap(PxGeometry *geom, float *position, float *quaternion) {
   PxTransform geomPose(

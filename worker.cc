@@ -62,7 +62,7 @@ public:
 
 //
 
-// MESHOPTIMIZER_API size_t meshopt_simplify(unsigned int* destination, const unsigned int* indices, size_t index_count, const float* vertex_positions, size_t vertex_count, size_t vertex_positions_stride, size_t target_index_count, float target_error, unsigned int options, float* result_error);
+/* // MESHOPTIMIZER_API size_t meshopt_simplify(unsigned int* destination, const unsigned int* indices, size_t index_count, const float* vertex_positions, size_t vertex_count, size_t vertex_positions_stride, size_t target_index_count, float target_error, unsigned int options, float* result_error);
 EMSCRIPTEN_KEEPALIVE void meshoptSimplify(
   const unsigned int* indices,
   size_t index_count,
@@ -74,19 +74,13 @@ EMSCRIPTEN_KEEPALIVE void meshoptSimplify(
   unsigned int **destination,
   unsigned int *numDestinations
 ) {
-  /* std::vector<PositionUV> positionUvs(vertex_count);
-  for (size_t i = 0; i < vertex_count; i++) {
-    positionUvs[i].position = Vec{vertex_positions[i * 3], vertex_positions[i * 3 + 1], vertex_positions[i * 3 + 2]};
-    positionUvs[i].uv = Vec2{uvs[i * 2], uvs[i * 2 + 1]};
-  } */
-  
   *destination = (unsigned int *)malloc(sizeof(unsigned int) * index_count);
   
   const size_t vertex_positions_stride = 3 * sizeof(float);
   constexpr unsigned int options = 0;
   float result_error;
   *numDestinations = meshopt_simplify(*destination, indices, index_count, vertex_positions, vertex_count, vertex_positions_stride, target_index_count, target_error, options, &result_error);
-}
+} */
 
 // MESHOPTIMIZER_EXPERIMENTAL size_t meshopt_simplifySloppy(unsigned int* destination, const unsigned int* indices, size_t index_count, const float* vertex_positions, size_t vertex_count, size_t vertex_positions_stride, size_t target_index_count, float target_error, float* result_error);
 
@@ -98,7 +92,7 @@ EMSCRIPTEN_KEEPALIVE void meshoptSimplify(
 // scratchStack.u32.byteOffset,
 // scratchStack.u32.byteOffset + Uint32Array.BYTES_PER_ELEMENT
 
-EMSCRIPTEN_KEEPALIVE void meshoptSimplifySloppy(
+/* EMSCRIPTEN_KEEPALIVE void meshoptSimplifySloppy(
   const unsigned int* indices,
   size_t index_count,
   const float* vertex_positions,
@@ -109,17 +103,11 @@ EMSCRIPTEN_KEEPALIVE void meshoptSimplifySloppy(
   unsigned int **destination,
   unsigned int *numDestinations
 ) {
-  /* std::vector<PositionUV> positionUvs(vertex_count);
-  for (size_t i = 0; i < vertex_count; i++) {
-    positionUvs[i].position = Vec{vertex_positions[i * 3], vertex_positions[i * 3 + 1], vertex_positions[i * 3 + 2]};
-    positionUvs[i].uv = Vec2{uvs[i * 2], uvs[i * 2 + 1]};
-  } */
-
   *destination = (unsigned int *)malloc(sizeof(unsigned int) * index_count);
   
   const size_t vertex_positions_stride = 3 * sizeof(float);
   float result_error;
   *numDestinations = meshopt_simplifySloppy(*destination, indices, index_count, vertex_positions, vertex_count, vertex_positions_stride, target_index_count, target_error, &result_error);
-}
+} */
 
 } // extern "C"
