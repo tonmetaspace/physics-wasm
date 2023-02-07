@@ -48,7 +48,6 @@ emcc -s NO_EXIT_RUNTIME=1 -s TOTAL_MEMORY=52428800 -D__linux__ -s ALLOW_MEMORY_G
   -DNDEBUG -DPX_SIMD_DISABLED -DPX_EMSCRIPTEN=1 -DPX_COOKING \
   -I. \
   -o bin/physics-wasm-worker.js
-sed -Ei 's/physics-wasm-worker.wasm/bin\/physics-wasm-worker.wasm/g' bin/physics-wasm-worker.js
 sed -Ei 's/scriptDirectory\+path/"\/"+path/g' bin/physics-wasm-worker.js
 echo 'let accept, reject;const p = new Promise((a, r) => {  accept = a;  reject = r;});Module.postRun = () => {  accept();};Module.waitForLoad = () => p;run();export default Module;' >> bin/physics-wasm-worker.js
 echo 'done building worker'
