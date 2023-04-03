@@ -504,7 +504,7 @@ void PScene::addCapsuleGeometry(
   actors.push_back(actor);
 }
 
-void PScene::addPlaneGeometry(float *position, float *quaternion, unsigned int id, PxMaterial *material, unsigned int dynamic) {
+void PScene::addPlaneGeometry(float *position, float *quaternion, unsigned int id, PxMaterial *material, unsigned int dynamic, int groupId) {
   PxTransform transform(PxVec3(position[0], position[1], position[2]), PxQuat(quaternion[0], quaternion[1], quaternion[2], quaternion[3]));
   PxPlaneGeometry geometry;
   
@@ -515,6 +515,23 @@ void PScene::addPlaneGeometry(float *position, float *quaternion, unsigned int i
   } else {
     PxRigidStatic *plane = PxCreateStatic(*physics, transform, geometry, *material);
     actor = plane;
+  }
+  
+  if (groupId != -1) {
+    // collision filter
+    unsigned int numShapes = actor->getNbShapes();
+    if (numShapes == 1) {
+      PxShape *shapes[1];
+      actor->getShapes(shapes, sizeof(shapes)/sizeof(shapes[0]), 0);
+      PxShape *shape = shapes[0];
+      PxFilterData filterData{};
+      filterData.word0 = groupId; // character id
+      filterData.word1 = groupId; // the unique bone id in the character
+      filterData.word3 = 3; // signal this is a character skeleton bone; used during filtering
+      shape->setSimulationFilterData(filterData); 
+    } else {
+      std::cerr << "unexpected number of shapes: " << numShapes << std::endl;
+    }
   }
 
   actor->userData = (void *)id;
